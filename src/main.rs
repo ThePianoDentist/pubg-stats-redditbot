@@ -1,11 +1,8 @@
-#![feature(rustc_private)]
 extern crate reqwest;
 extern crate pretty_env_logger;
 extern crate serde_json;
-#[macro_use] extern crate serde_derive;
 #[macro_use] extern crate error_chain;
 #[macro_use] extern crate lazy_static;
-
 extern crate regex;
 
 use regex::Regex;
@@ -26,15 +23,9 @@ fn check_for_identifier(comment: &str){
         //static ref RE: Regex = Regex::new(r".*?stats!\s?([^\s]+)").unwrap();
         static ref RE: Regex = Regex::new(r"[\w]+\s([^\s]+)").unwrap();
     }
-    match RE.captures(comment){
-        Some(caps) => {
-            match caps.get(1){
-                Some(player) => {println!("{}", player.as_str())},
-                None => {}
-            }
-        },
-        None => {}
-    };
+    if let Some(re_match) = RE.captures(comment).and_then(|x| x.get(1)){ 
+        println!("{}", re_match.as_str());
+    }
 }
 
 fn spider_comments(children: &Value){
